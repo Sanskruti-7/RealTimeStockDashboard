@@ -103,8 +103,12 @@ st.subheader(company_name)
 
 # PRICE DATA
 
-current_price = float(data["Close"].iloc[-1])
-previous_price = float(data["Close"].iloc[-2])
+if len(data) >= 2:
+    current_price = float(data["Close"].iloc[-1])
+    previous_price = float(data["Close"].iloc[-2])
+else:
+    current_price = float(data["Close"].iloc[-1])
+    previous_price = current_price
 
 change = current_price - previous_price
 
