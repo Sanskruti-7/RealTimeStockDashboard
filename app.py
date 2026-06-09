@@ -27,6 +27,7 @@ def get_company_info(symbol):
         return yf.Ticker(symbol).info
     except:
         return {}
+
     
 st.set_page_config(
     page_title="Real-Time Stock Dashboard",
@@ -46,10 +47,12 @@ st_autorefresh(
 st.caption(
     "Live market analytics with technical indicators, portfolio tracking and interactive charts."
 )
+st.title("📈 Real-Time Stock Market Dashboard")
 
 
-
+# ==================================================
 # SIDEBAR
+# ==================================================
 
 st.sidebar.header("📊 Stock Selection")
 
@@ -65,10 +68,59 @@ stock_symbol = st.sidebar.selectbox(
         "META",
         "RELIANCE.NS",
         "TCS.NS",
-        "INFY.NS",
-        "SBIN.NS",
-        "HDFCBANK.NS"
+        "INFY.NS"
     ]
+)
+
+# Theme Toggle
+# Theme Toggle
+dark_mode = st.sidebar.toggle(
+    "🌙 Dark Mode",
+    value=True
+)
+if dark_mode:
+    bg_color = "#0E1117"
+    text_color = "#FFFFFF"
+    card_color = "#161B22"
+    sidebar_color = "#161B22"
+else:
+    bg_color = "#FFFFFF"
+    text_color = "#000000"
+    card_color = "#F5F5F5"
+    sidebar_color = "#EAEAEA"
+
+st.markdown(
+    f"""
+    <style>
+
+    .stApp {{
+        background-color: {bg_color};
+        color: {text_color};
+    }}
+
+    section[data-testid="stSidebar"] {{
+        background-color: {sidebar_color};
+    }}
+
+    div[data-testid="metric-container"] {{
+        background-color: {card_color};
+        border-radius: 12px;
+        padding: 15px;
+    }}
+
+    h1, h2, h3, h4, h5, h6, p, label {{
+        color: {text_color};
+    }}
+
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+plot_template = (
+    "plotly_dark"
+    if dark_mode
+    else "plotly_white"
 )
 
 st.sidebar.markdown("---")
@@ -272,10 +324,9 @@ with tab1:
     )
 
     fig.update_layout(
-    template="plotly_dark",
+    template=plot_template,
     height=700,
-    xaxis_rangeslider_visible=False,
-    uirevision=True
+    xaxis_rangeslider_visible=False
 )
 
     st.plotly_chart(
@@ -328,12 +379,13 @@ with tab2:
             name="50 Day MA"
         )
     )
-
     fig_ma.update_layout(
-    template="plotly_dark",
+    template=plot_template,
     height=600,
     uirevision=True
 )
+
+
 
     st.plotly_chart(
         fig_ma,
@@ -388,7 +440,7 @@ with tab2:
     fig_rsi.add_hline(y=30)
 
     fig_rsi.update_layout(
-    template="plotly_dark",
+    template=plot_template,
     height=400,
     uirevision=True
 )
@@ -406,20 +458,24 @@ with tab2:
 
     ma20 = data["MA20"].iloc[-1]
     ma50 = data["MA50"].iloc[-1]
-if ma20 > ma50:
-    st.success(
-        "🟢 BUY SIGNAL - Short-term trend is stronger than long-term trend."
-    )
 
-elif ma20 < ma50:
-    st.error(
-        "🔴 SELL SIGNAL - Short-term trend is weaker than long-term trend."
-    )
+    if ma20 > ma50:
 
-else:
-    st.warning(
-        "🟡 HOLD - Trend is neutral."
-    )
+        st.success(
+            "🟢 BUY SIGNAL - Short-term trend is stronger than long-term trend."
+        )
+
+    elif ma20 < ma50:
+
+        st.error(
+            "🔴 SELL SIGNAL - Short-term trend is weaker than long-term trend."
+        )
+
+    else:
+
+        st.warning(
+            "🟡 HOLD - Trend is neutral."
+        )
 
 # DATA TAB
 
@@ -441,8 +497,8 @@ with tab3:
     )
 
     fig_vol.update_layout(
-        template="plotly_dark",
-        height=500
+    template=plot_template,
+    height=500
     )
 
     st.plotly_chart(
