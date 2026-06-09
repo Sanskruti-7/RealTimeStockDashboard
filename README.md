@@ -1,5 +1,10 @@
 # 📈 Real-Time Stock Market Dashboard
 
+### 🚀 Live Demo
+https://realtimestockdashboard.streamlit.app
+
+### 📂 GitHub Repository
+https://github.com/Sanskruti-7/RealTimeStockDashboard
 ## Overview
 
 A professional stock market dashboard built using Python, Streamlit, Plotly, Pandas, and Yahoo Finance API.
