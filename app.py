@@ -91,12 +91,30 @@ buy_price = st.sidebar.number_input(
 data = load_stock_data(stock_symbol)
 
 # COMPANY INFO
-
 try:
-    info = get_company_info(stock_symbol)
-    company_name = info.get("longName", stock_symbol)
+    ticker = yf.Ticker(stock_symbol)
+
+    info = ticker.info
+
+    company_name = info.get(
+        "longName",
+        stock_symbol
+    )
+
+    market_cap = info.get(
+        "marketCap",
+        None
+    )
+
+    pe_ratio = info.get(
+        "trailingPE",
+        "N/A"
+    )
+
 except:
     company_name = stock_symbol
+    market_cap = None
+    pe_ratio = "N/A"
     info = {}
 
 st.subheader(company_name)
@@ -146,33 +164,46 @@ with col4:
 
 # COMPANY STATS
 
-try:
 
-    c1, c2, c3 = st.columns(3)
 
-    with c1:
-        market_cap = info.get("marketCap", None)
+c1, c2, c3, c4 = st.columns(4)
 
-        if market_cap:
-            st.metric(
-                "Market Cap",
-                f"${market_cap:,.0f}"
-            )
+with c1:
 
-    with c2:
+    if market_cap:
+
         st.metric(
-            "PE Ratio",
-            str(info.get("trailingPE", "N/A"))
+            "Market Cap",
+            f"${market_cap/1e9:.2f} B"
         )
 
-    with c3:
+    else:
+
         st.metric(
-            "52 Week High",
-            str(info.get("fiftyTwoWeekHigh", "N/A"))
+            "Market Cap",
+            "N/A"
         )
 
-except:
-    pass
+with c2:
+
+    st.metric(
+        "PE Ratio",
+        str(pe_ratio)
+    )
+
+with c3:
+
+    st.metric(
+        "52 Week High",
+        f"${data['High'].max():.2f}"
+    )
+
+with c4:
+
+    st.metric(
+        "52 Week Low",
+        f"${data['Low'].min():.2f}"
+    )
 
 st.markdown("---")
 
